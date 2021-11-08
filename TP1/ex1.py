@@ -1,10 +1,13 @@
 import numpy as np
+
 exit = False
-while(exit == False):
+while not exit:
     filename = input("Write exit to close the app or the file name to continue: ")
-    if(filename == "exit" or filename == "Exit" or filename == "EXIT" ):
+
+    if filename == "exit" or filename == "Exit" or filename == "EXIT":
         exit = True
         break
+
     else:
         entropy = 0
         f = open(filename, "r")
