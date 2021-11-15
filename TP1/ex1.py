@@ -1,46 +1,32 @@
 import math
-import numpy as np
 
 
-def most_frequent(List):
-    counter = 0
-    num = List[0]
+def ex1():
+    while True:
+        filename = input("Write the file name or 'exit' to close the app: ")
 
-    for i in List:
-        curr_frequency = List.count(i)
-        if (curr_frequency > counter):
-            counter = curr_frequency
-            num = i
+        if filename.lower() == "exit":
+            break
 
-    return num
+        else:
+            entropy = 0
+            bytes = []
+            occurrences = [0] * 256
 
-exit = False
-while not exit:
-    filename = input("Write exit to close the app or the file name to continue: ")
+            file = open(filename, "rb")
 
-    if filename == "exit" or filename == "Exit" or filename == "EXIT":
-        exit = True
-        break
+            byte = file.read(1)
+            while byte:
+                bytes.append(byte)
+                occurrences[int.from_bytes(byte, 'big')] += 1
+                byte = file.read(1)
 
-    else:
-        entropy = 0
-        f = open(filename, "r")
-        words = f.read()
-        #words_as_bytes = str.encode(words)
-        f.close()
-        words = [bytes(x, 'utf8') for x in words] # encoding characters to bytes
-        unique = []
-        for x in words:
-            if x not in unique:
-                unique.append(x)
-            
-        wordsList = list(words)
-        
-        for y in unique:
-            numberOfOcc = wordsList.count(y)
-            entropy += (numberOfOcc/256) * math.log(1/(numberOfOcc/256), 2) # entropy calculation
-        # FINAL RESULT
-        print(entropy)
-        print(most_frequent(wordsList))
-            
-            
+            file.close()
+
+            for y in occurrences:
+                if y != 0:
+                    entropy += (y / 256) * math.log(1 / (y / 256), 2)
+
+            print(bytes)
+            print(occurrences)
+            print(entropy)
