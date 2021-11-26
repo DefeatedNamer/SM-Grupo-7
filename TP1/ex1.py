@@ -9,7 +9,9 @@ def ex1():
             break
 
         else:
-            entropy = 0
+            entropy1o = 0
+            entropy2o = 0
+
             n_bytes = 0
             byte_sequence = []
             occurrences = [0] * 256
@@ -24,14 +26,20 @@ def ex1():
                 byte = file.read(1)
 
             file.close()
-            
-            for y in occurrences:
-                p = y / n_bytes
+
+            for idx, x in enumerate(occurrences):
+                p = x / n_bytes
 
                 if p > 0:
-                    entropy -= p * math.log(p, 2)
+                    entropy1o -= p * math.log(p, 2)
+
+                    if idx > 0:
+                        entropy2o -= occurrences[idx-1] / n_bytes * p * math.log(p, 2)
+                    else:
+                        entropy2o -= p * math.log(p, 2)
 
             print(byte_sequence)
             print(occurrences)
             print(n_bytes)
-            print(entropy)
+            print(f"entropia 1ª ordem: {entropy1o}")
+            print(f"entropia 2ª ordem: {entropy2o}")
