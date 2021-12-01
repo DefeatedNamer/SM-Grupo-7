@@ -26,6 +26,7 @@ def ex1():
 
             file.close()
 
+            # Calculate 1st order entropy
             entropy1o = 0
 
             for idx, count in enumerate(symbol_occurrences):
@@ -35,44 +36,54 @@ def ex1():
                 if p > 0:
                     entropy1o -= p * math.log(p, 2)
 
-            entropy2o = 0
-
+            # pair symbols with preceding symbols
+            n_pairs = 0
             pairs = []
+
             pair_occurrences = {}
 
             for idx, byte in enumerate(byte_sequence):
                 if idx < len(byte_sequence) - 1:
                     pair = (byte, byte_sequence[idx + 1])
                     pairs.append(pair)
+                    n_pairs += 1
 
                     if pair in pair_occurrences:
                         pair_occurrences[pair] += 1
                     else:
                         pair_occurrences[pair] = 1
 
-            for pair in pair_occurrences:
-                count = 0
-                for other_pair in pair_occurrences:
-                    if other_pair[0] == pair[0]:
-                        count += pair_occurrences[other_pair]
+            # Calculate 2nd order entropy
+            entropy2o = 0
 
-                p = pair_occurrences[pair] / count
+            for idx, pair in enumerate(pair_occurrences):
+                p = pair_occurrences[pair] / n_pairs
 
                 if p > 0:
                     entropy2o -= p * math.log(p, 2)
 
+            entropy2o /= 2
+
+            # Calculate 1st order Markov model entropy
             markov_entropy_1o = 0
 
+            min_entropy = 8
+            max_entropy = 0
+
             for pair in pair_occurrences:
-                count = 0
-                for other_pair in pair_occurrences:
-                    if other_pair[0] == pair[0]:
-                        count += pair_occurrences[other_pair]
+                count = symbol_occurrences[int.from_bytes(pair[0], 'big')]
 
                 p = pair_occurrences[pair] / count
 
                 if p > 0:
-                    markov_entropy_1o -= symbol_probability[int.from_bytes(pair[0], 'big')] * p * math.log(p, 2)
+                    h = -(symbol_probability[int.from_bytes(pair[0], 'big')] * p * math.log(p, 2))
+                    markov_entropy_1o += h
+
+                    if p < min_entropy:
+                        min_entropy = p
+
+                    if p > max_entropy:
+                        max_entropy = p
 
             print(f"\nbyte_sequence: {byte_sequence}\n")
             print(f"pairs_array: {pair_occurrences}\n")
@@ -81,6 +92,9 @@ def ex1():
 
             print(f"n_bytes: {n_bytes}\n")
 
-            print(f"entropia 1ª ordem: {entropy1o} bits/per symbol")
-            print(f"entropia 2ª ordem: {entropy2o} bits/per symbol")
-            print(f"entropia Markov 1ª ordem: {markov_entropy_1o} bits/per symbol\n")
+            print(f"entropia 1ª ordem: {entropy1o} bits/symbol\n")
+            print(f"entropia 2ª ordem: {entropy2o} bits/symbol\n")
+            print(f"entropia Markov 1ª ordem: {markov_entropy_1o} bits/symbol")
+            print(f"entropia Markov 1ª ordem min: {min_entropy} bits/symbol")
+            print(f"entropia Markov 1ª ordem max: {max_entropy} bits/symbol\n")
+
