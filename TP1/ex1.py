@@ -19,8 +19,8 @@ def ex1():
         n_bytes = 0
         symbol_sequence = []
 
-        symbol_occurrences = [0] * 256
-        symbol_probability = [0.0] * 256
+        symbol_occurrences = {}
+        symbol_probability = {}
 
         # Read file
         symbol = file.read(1)
@@ -29,7 +29,11 @@ def ex1():
             n_bytes += 1
 
             symbol_sequence.append(symbol)
-            symbol_occurrences[symbol] += 1
+
+            if symbol in symbol_occurrences:
+                symbol_occurrences[symbol] += 1
+            else:
+                symbol_occurrences[symbol] = 1
 
             symbol = file.read(1)
 
@@ -38,12 +42,28 @@ def ex1():
         # Calculate 1st order entropy
         entropy1o = 0
 
-        for idx, count in enumerate(symbol_occurrences):
-            p = count / n_bytes
+        for symbol in symbol_occurrences:
+            p = symbol_occurrences[symbol] / n_bytes
 
             if p > 0:
-                symbol_probability[idx] = p
+                symbol_probability[symbol] = p
                 entropy1o -= p * math.log(p, 2)
+
+        # Calculate smallest sub group with higher than 50% probability
+        group = []
+        group_probability = 0.0
+
+        while group_probability < 0.5:
+            max_p = 0.0
+            sy = -1
+
+            for symbol in symbol_probability:
+                if symbol not in group and symbol_probability[symbol] > max_p:
+                    max_p = symbol_probability[symbol]
+                    sy = symbol
+
+            group.append(sy)
+            group_probability += max_p
 
         # Calculate 2nd order entropy
         entropy2o = 0
@@ -95,37 +115,41 @@ def ex1():
                 else:
                     transition_occurrences[t] = 1
 
-
-
         for t in transition_occurrences:
             p = transition_occurrences[t] / symbol_occurrences[t[0]]
 
             if p > 0:
+                transition_probability[t] = p
                 h = -(symbol_probability[t[0]] * p * math.log(p, 2))
                 markov_entropy_1o += h
 
-                if p < min_p:
-                    min_p = p
+        m1_max = 0
+        m1_min = 256
 
-                if p > max_p:
-                    max_p = p
-        min_p = 256
-        max_p = 0
+        for s in symbol_occurrences:
+            if symbol_probability[s] > 0:
+                p = 0
 
-        
+                for t in transition_occurrences:
+                    if t[0] == s:
+                        t_prob = transition_probability[t]
+                        p -= t_prob * math.log(t_prob, 2)
+
+                if p > 0:
+                    if p > m1_max:
+                        m1_max = p
+
+                    if p < m1_min:
+                        m1_min = p
 
         # Print results
-        # print(f"\nsymbol_sequence: {symbol_sequence}\n")
-        # print(f"pairs_array: {pair_occurrences}\n")
-
-        # print(f"symbol_occurrences: {symbol_occurrences}\n")
-
         print(f"n_bytes: {n_bytes}\n")
 
         print(f"entropia 1ª ordem: {entropy1o} bits/symbol\n")
+        print(f"menor sub-grupo com frequência de ocorrência > 50%: {group}\n")
         print(f"entropia 2ª ordem: {entropy2o} bits/symbol\n")
 
         print(f"entropia Markov 1ª ordem: {markov_entropy_1o} bits/symbol")
 
-        print(f"entropia Markov 1ª ordem min: {min_p} bits/symbol")
-        print(f"entropia Markov 1ª ordem max: {max_p} bits/symbol\n")
+        print(f"entropia Markov 1ª ordem min: {m1_min} bits/symbol")
+        print(f"entropia Markov 1ª ordem max: {m1_max} bits/symbol\n")
