@@ -1,4 +1,4 @@
-from ex1 import ex1
+from ex1_2 import ex1
 
 if __name__ == '__main__':
     ex1()
