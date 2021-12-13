@@ -13,7 +13,7 @@ numberOf1s = bitSequence.count(1)
 print(f"Sequence: {bitSequence}")
 print(f"Number of 1's: {numberOf1s}")
 
-
+# Combination of probability
 def nCr(n, r):
     f = math.factorial
     return f(n) / f(r) / f(n - r)
@@ -22,6 +22,7 @@ def nCr(n, r):
 entropy1o = 0
 x = 0
 
+#Entropy calculation
 while x < 17:
     entropy1o -= (nCr(16, x) / 2 ** 16) * math.log((nCr(16, x) / 2 ** 16), 2)
     x += 1
