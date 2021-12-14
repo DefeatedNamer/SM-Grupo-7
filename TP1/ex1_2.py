@@ -1,4 +1,5 @@
 import math
+import random
 
 
 def ex1():
@@ -41,6 +42,8 @@ def ex1():
 
         # Calculate 1st order entropy
         entropy1o = 0
+        most_frequent_symbol = -1
+        most_frequent_p = 0.0
 
         for symbol in symbol_occurrences:
             p = symbol_occurrences[symbol] / n_bytes
@@ -48,6 +51,10 @@ def ex1():
             if p > 0:
                 symbol_probability[symbol] = p
                 entropy1o -= p * math.log(p, 2)
+
+                if p > most_frequent_p:
+                    most_frequent_p = p
+                    most_frequent_symbol = symbol
 
         # Calculate smallest sub group with higher than 50% probability
         group = []
@@ -143,13 +150,45 @@ def ex1():
                         m1_min = p
 
         # Print results
-        print(f"n_bytes: {n_bytes}\n")
+        print(f"1.a")
+        print(f"entropia 1ª ordem: {entropy1o} bits/symbol")
+        print(f"maior frequência de ocorrência: simbolo \"{most_frequent_symbol}\" com {most_frequent_p*100}%\n")
 
-        print(f"entropia 1ª ordem: {entropy1o} bits/symbol\n")
+        print(f"1.b")
         print(f"menor sub-grupo com frequência de ocorrência > 50%: {group}\n")
+
+        print(f"1.c")
         print(f"entropia 2ª ordem: {entropy2o} bits/symbol\n")
 
+        print(f"2")
         print(f"entropia Markov 1ª ordem: {markov_entropy_1o} bits/symbol")
-
         print(f"entropia Markov 1ª ordem min: {m1_min} bits/symbol")
         print(f"entropia Markov 1ª ordem max: {m1_max} bits/symbol\n")
+
+        # Calcular valores para o ex 7
+        '''
+        for i in range(10):
+            start = random.randint(0, n_bytes-1)
+            l_symbols = symbol_sequence[start:start + 128]
+
+            l_symbol_occurrences = {}
+            l_symbol_probability = {}
+
+            for symbol in l_symbols:
+                if symbol in l_symbol_occurrences:
+                    l_symbol_occurrences[symbol] += 1
+                else:
+                    l_symbol_occurrences[symbol] = 1
+
+            # Calculate 1st order entropy
+            entropy1o = 0
+
+            for symbol in l_symbol_occurrences:
+                p = l_symbol_occurrences[symbol] / 128
+
+                if p > 0:
+                    l_symbol_probability[symbol] = p
+                    entropy1o -= p * math.log(p, 2)
+
+            print(entropy1o)
+        '''
