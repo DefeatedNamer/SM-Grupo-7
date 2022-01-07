@@ -1,5 +1,4 @@
 import math
-#import random
 
 
 def ex1():
@@ -102,53 +101,6 @@ def ex1():
 
         entropy2o /= 2
 
-        # Calculate 1st order Markov model entropy
-        markov_entropy_1o = 0
-
-        n_transitions = 0
-        transitions = []
-
-        transition_occurrences = {}
-        transition_probability = {}
-
-        for idx, symbol in enumerate(symbol_sequence):
-            if idx < len(symbol_sequence) - 1:
-                t = (symbol, symbol_sequence[idx + 1])
-                transitions.append(t)
-                n_transitions += 1
-
-                if t in transition_occurrences:
-                    transition_occurrences[t] += 1
-                else:
-                    transition_occurrences[t] = 1
-
-        for t in transition_occurrences:
-            p = transition_occurrences[t] / symbol_occurrences[t[0]]
-
-            if p > 0:
-                transition_probability[t] = p
-                h = -(symbol_probability[t[0]] * p * math.log(p, 2))
-                markov_entropy_1o += h
-
-        m1_max = 0
-        m1_min = 256
-
-        for s in symbol_occurrences:
-            if symbol_probability[s] > 0:
-                p = 0
-
-                for t in transition_occurrences:
-                    if t[0] == s:
-                        t_prob = transition_probability[t]
-                        p -= t_prob * math.log(t_prob, 2)
-
-                if p > 0:
-                    if p > m1_max:
-                        m1_max = p
-
-                    if p < m1_min:
-                        m1_min = p
-
         # Print results
         print(f"1.a")
         print(f"entropia 1ª ordem: {entropy1o} bits/symbol")
@@ -159,36 +111,3 @@ def ex1():
 
         print(f"1.c")
         print(f"entropia 2ª ordem: {entropy2o} bits/symbol\n")
-
-        print(f"2")
-        print(f"entropia Markov 1ª ordem: {markov_entropy_1o} bits/symbol")
-        print(f"entropia Markov 1ª ordem min: {m1_min} bits/symbol")
-        print(f"entropia Markov 1ª ordem max: {m1_max} bits/symbol\n")
-
-        # Calcular valores para o ex 7
-        '''
-        for i in range(10):
-            start = random.randint(0, n_bytes-1)
-            l_symbols = symbol_sequence[start:start + 128]
-
-            l_symbol_occurrences = {}
-            l_symbol_probability = {}
-
-            for symbol in l_symbols:
-                if symbol in l_symbol_occurrences:
-                    l_symbol_occurrences[symbol] += 1
-                else:
-                    l_symbol_occurrences[symbol] = 1
-
-            # Calculate 1st order entropy
-            entropy1o = 0
-
-            for symbol in l_symbol_occurrences:
-                p = l_symbol_occurrences[symbol] / 128
-
-                if p > 0:
-                    l_symbol_probability[symbol] = p
-                    entropy1o -= p * math.log(p, 2)
-
-            print(entropy1o)
-        '''
