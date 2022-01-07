@@ -1,5 +1,5 @@
 import math
-import random
+#import random
 
 
 def ex1():
