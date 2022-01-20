@@ -10,10 +10,44 @@ def signal_to_noise(arr, axis=0, ddof=0):
 
 
 def ex2():
-    image = Image.open("kodim10.png")
+    while True:
+        filename1 = input("Write an image's file name or 'exit' to close the app: ")
 
-    image_sequence = image.getdata()
-    image_array = numpy.array(image_sequence)
+        if filename1.lower() == "exit":
+            break
 
-    print(image_array)
-    print("Signal to noise ratio for array1: ", signal_to_noise(image_array, axis=0, ddof=0))
+        try:
+            file1 = open(filename1, "rb")
+
+        except FileNotFoundError:
+            print("Wrong file or file path\n")
+            continue
+
+        filename2 = input("Write another image's file name: ")
+
+        if filename2.lower() == "exit":
+            break
+
+        try:
+            file2 = open(filename2, "rb")
+
+        except FileNotFoundError:
+            print("Wrong file or file path\n")
+            continue
+
+        image1 = Image.open(file1)
+        image_sequence1 = image1.getdata()
+        image_array1 = numpy.array(image_sequence1)
+
+        image2 = Image.open(file2)
+        image_sequence2 = image2.getdata()
+        image_array2 = numpy.array(image_sequence2)
+
+        #image_array_e256
+        #for i, a in enumerate(image_array1):
+
+        print(image_array1, '\n')
+        print(image_array2, '\n')
+
+        print("Signal to noise ratio for 1st image: ", signal_to_noise(image_array1, axis=0, ddof=0))
+        print("Signal to noise ratio for 2nd image: ", signal_to_noise(image_array2, axis=0, ddof=0), '\n')
