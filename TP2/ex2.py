@@ -1,4 +1,5 @@
 import numpy
+import math
 from PIL import Image
 
 
@@ -9,14 +10,22 @@ def signal_to_noise(arr, axis=0, ddof=0):
     return numpy.where(sd == 0, 0, me/sd)
 
 
+def PSNR(original, compressed):
+    mse = numpy.mean((original - compressed) ** 2)
+    if mse == 0:
+        return 100
+
+    max_pixel = 255.0
+    psnr = 20 * math.log10(max_pixel / math.sqrt(mse))
+    return psnr
+
+
 def ex2():
     while True:
         filename_1 = input("Write an image's file name or 'exit' to close the app: ")
 
         if filename_1.lower() == "exit":
             break
-
-        # filename_1 = "kodak1.png"
 
         try:
             file_1 = open(filename_1, "rb")
@@ -33,8 +42,6 @@ def ex2():
 
         if filename_2.lower() == "exit":
             break
-        
-        # filename_2 = "kodak1_dist.png"
 
         try:
             file_2 = open(filename_2, "rb")
@@ -81,8 +88,12 @@ def ex2():
         image_e256 = Image.fromarray(array_e256)
         image_e256.save("e256.png")
 
-        print("Signal to noise ratio for 1st image: ", signal_to_noise(image_array_1))
-        print("Signal to noise ratio for 2nd image: ", signal_to_noise(image_array_2))
-        print("Signal to noise ratio for e256.png: ", signal_to_noise(image_array_e256), '\n')
+        snr_each_component = signal_to_noise(image_array_e256)
+        snr_all_components = snr_each_component.mean(0)
 
-        break
+        print()
+        print("Signal to noise ratio for each component: ", snr_each_component)
+        print("Signal to noise ratio for the 3 components: ", snr_all_components)
+        print("Peak signal to noise ratio: ", PSNR(image_array_1, image_array_2), '\n')
+
+
